@@ -11,9 +11,7 @@ import history from './history';
 const auth = new Auth();
 
 const handleAuthentication = ({location}) => {
-  console.log(location);
   if (location.search.substring(0,6) === '?code=') {
-
     auth.handleAuthentication(location.search.substring(6));
   }
 }
