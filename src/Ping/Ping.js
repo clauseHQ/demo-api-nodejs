@@ -30,8 +30,8 @@ class Ping extends Component {
         {
           isAuthenticated() && (
             <ul>
-              { contracts.map(contract => (
-                <li>
+              { contracts.map((contract, index) => (
+                <li key={index}>
                   <p>
                     <a href={'https://hub.clause.io/contract/'+contract.id}>{contract.name}</a>
                   </p>
