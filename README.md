@@ -24,7 +24,7 @@ npm run start
 
 ## Author
 
-This is sample is based on the excellent samples from [Auth0](auth0.com) and modified by [Clause](clause.io)
+This is sample is based on the excellent samples from [Auth0](auth0.com) and modified by [Clause](clause.io).
 
 ## License
 
