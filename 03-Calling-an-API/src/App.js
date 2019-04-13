@@ -31,7 +31,7 @@ class App extends Component {
         <Navbar fluid>
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="#">Auth0 - React</a>
+              <a href="#">Clause - API Sample</a>
             </Navbar.Brand>
             <Button
               bsStyle="primary"
@@ -70,7 +70,7 @@ class App extends Component {
                     className="btn-margin"
                     onClick={this.goTo.bind(this, 'ping')}
                   >
-                    Ping
+                    Contracts
                   </Button>
                 )
             }

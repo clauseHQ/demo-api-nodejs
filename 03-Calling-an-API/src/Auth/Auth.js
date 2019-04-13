@@ -1,21 +1,17 @@
-import auth0 from 'auth0-js';
 import { AUTH_CONFIG } from './auth0-variables';
+import { API_URL } from './../constants';
 import history from '../history';
+import crypto from 'crypto';
+import axios from 'axios';
+import request from 'request';
+import querystring from 'querystring';
 
 export default class Auth {
   accessToken;
   idToken;
   expiresAt;
   userProfile;
-
-  auth0 = new auth0.WebAuth({
-    domain: AUTH_CONFIG.domain,
-    clientID: AUTH_CONFIG.clientId,
-    redirectUri: AUTH_CONFIG.callbackUrl,
-    audience: AUTH_CONFIG.apiUrl,
-    responseType: 'token id_token',
-    scope: 'openid profile read:messages'
-  });
+  verifier;
 
   constructor() {
     this.login = this.login.bind(this);
@@ -29,18 +25,58 @@ export default class Auth {
   }
 
   login() {
-    this.auth0.authorize();
+    const encode = buffer => buffer.toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+    this.verifier = encode(crypto.randomBytes(32));
+    const challenge = verifier => encode(
+      crypto.createHash('sha256')
+        .update(verifier)
+        .digest()
+    );
+    
+    localStorage.setItem('verifier', this.verifier);
+    window.location = `https://${AUTH_CONFIG.domain}/authorize?audience=${AUTH_CONFIG.apiUrl}&scope=write:all&response_type=code&client_id=${AUTH_CONFIG.clientId}&redirect_uri=${AUTH_CONFIG.callbackUrl}&code_challenge=${challenge(this.verifier)}&code_challenge_method=S256`;
   }
 
-  handleAuthentication() {
-    this.auth0.parseHash((err, authResult) => {
-      if (authResult && authResult.accessToken && authResult.idToken) {
-        this.setSession(authResult);
-      } else if (err) {
+  handleAuthentication(code) {
+    this.verifier = localStorage.getItem('verifier');
+
+    const body = querystring.stringify({
+      grant_type: 'authorization_code',
+      client_id: AUTH_CONFIG.clientId,
+      code_verifier: this.verifier,
+      code,
+      redirect_uri: AUTH_CONFIG.callbackUrl
+    });
+  
+    return request({
+      uri: `https://${AUTH_CONFIG.domain}/oauth/token`,
+      method: 'POST',
+      headers: {
+        'Content-Length': body.length,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body
+    }, (error, response, body) => {
+      if(!error){
+        const authResult = JSON.parse(body);
+        if (authResult && authResult.access_token) {
+          this.setSession(authResult);
+        } else  {
+          history.replace('/home');
+          console.error(error);
+          alert(`Error: ${error.error}. Check the console for further details.`);
+        }
+      } else  {
         history.replace('/home');
-        console.log(err);
-        alert(`Error: ${err.error}. Check the console for further details.`);
+        console.error(error);
+        alert(`Error: ${error.error}. Check the console for further details.`);
       }
+      
+
+      return;
     });
   }
 
@@ -57,9 +93,8 @@ export default class Auth {
     localStorage.setItem('isLoggedIn', 'true');
 
     // Set the time that the access token will expire at
-    let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
-    this.accessToken = authResult.accessToken;
-    this.idToken = authResult.idToken;
+    let expiresAt = (authResult.expires_in * 1000) + new Date().getTime();
+    this.accessToken = authResult.access_token;
     this.expiresAt = expiresAt;
 
     // navigate to the home route
@@ -67,24 +102,27 @@ export default class Auth {
   }
 
   renewSession() {
-    this.auth0.checkSession({}, (err, authResult) => {
-       if (authResult && authResult.accessToken && authResult.idToken) {
-         this.setSession(authResult);
-       } else if (err) {
-         this.logout();
-         console.log(err);
-         alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
-       }
-    });
+    // this.auth0.checkSession({}, (err, authResult) => {
+    //    if (authResult && authResult.accessToken && authResult.idToken) {
+    //      this.setSession(authResult);
+    //    } else if (err) {
+    //      this.logout();
+    //      console.log(err);
+    //      alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
+    //    }
+    // });
   }
 
   getProfile(cb) {
-    this.auth0.client.userInfo(this.accessToken, (err, profile) => {
-      if (profile) {
-        this.userProfile = profile;
-      }
-      cb(err, profile);
-    });
+    const userId = '5afacb60cb1324958d9b1b90';
+
+    const headers = { 'Authorization': `Bearer ${this.getAccessToken()}`}
+    axios.get(`${API_URL}/users/${userId}/full`, { headers })
+      .then(response => {
+        this.userProfile = response.data;
+        cb(null, this.userProfile);
+      })
+      .catch(error => cb(error, null));
   }
 
   logout() {
@@ -99,12 +137,7 @@ export default class Auth {
     // Remove isLoggedIn flag from localStorage
     localStorage.removeItem('isLoggedIn');
 
-    this.auth0.logout({
-      return_to: window.location.origin
-    });
-
-    // navigate to the home route
-    history.replace('/home');
+    window.location = `https://${AUTH_CONFIG.domain}/v2/logout`;
   }
 
   isAuthenticated() {

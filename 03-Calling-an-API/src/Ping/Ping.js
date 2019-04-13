@@ -1,44 +1,45 @@
 import React, { Component } from 'react';
-import { Button } from 'react-bootstrap';
 import { API_URL } from './../constants';
 import axios from 'axios';
 
 class Ping extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      contracts: [],
+    };
+  }
   componentWillMount() {
-    this.setState({ message: '' });
-  }
-  ping() {
-    axios.get(`${API_URL}/public`)
-      .then(response => this.setState({ message: response.data.message }))
-      .catch(error => this.setState({ message: error.message }));
-  }
-  securedPing() {
     const { getAccessToken } = this.props.auth;
     const headers = { 'Authorization': `Bearer ${getAccessToken()}`}
-    axios.get(`${API_URL}/private`, { headers })
-      .then(response => this.setState({ message: response.data.message }))
+    axios.get(`${API_URL}/contracts/search`, { headers })
+      .then(response => this.setState({ contracts: response.data.contracts }))
       .catch(error => this.setState({ message: error.message }));
   }
   render() {
     const { isAuthenticated } = this.props.auth;
-    const { message } = this.state;
+    const { contracts } = this.state;
     return (
       <div className="container">
-        <h1>Make a Call to the Server</h1>
+        <h2>Contracts</h2>
         {
           !isAuthenticated() &&
-            <p>Log in to call a private (secured) server endpoint.</p>
+            <p>Log in to list your contracts.</p>
         }
-        <Button bsStyle="primary" onClick={this.ping.bind(this)}>Ping</Button>
-        {' '}
         {
           isAuthenticated() && (
-              <Button bsStyle="primary" onClick={this.securedPing.bind(this)}>
-                Call Private
-              </Button>
+            <ul>
+              { contracts.map(contract => (
+                <li>
+                  <p>
+                    <a href={'https://hub.clause.io/contract/'+contract.id}>{contract.name}</a>
+                  </p>
+                </li>
+              ))}
+            </ul>
             )
         }
-        <h2>{message}</h2>
       </div>
     );
   }
