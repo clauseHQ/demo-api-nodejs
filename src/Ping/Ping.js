@@ -13,8 +13,8 @@ class Ping extends Component {
   componentWillMount() {
     const { getAccessToken } = this.props.auth;
     const headers = { 'Authorization': `Bearer ${getAccessToken()}`}
-    axios.get(`${API_URL}/contracts/search`, { headers })
-      .then(response => this.setState({ contracts: response.data.contracts }))
+    axios.get(`${API_URL}/contracts/list`, { headers })
+      .then(response => this.setState({ contracts: response.data }))
       .catch(error => this.setState({ message: error.message }));
   }
   render() {
