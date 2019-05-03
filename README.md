@@ -1,6 +1,6 @@
 # Clause - API Sample
 
-This sample demonstrates how authenticate against the [Clause API](https://developers.clause.io) from a React single-page application (SPA).
+This sample demonstrates how authenticate against the [Clause API](https://developers.clause.io) from a Node.js server.
 
 ## Warning
 
