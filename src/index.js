@@ -1,11 +1,9 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import 'bootstrap/dist/css/bootstrap.css';
-import { makeMainRoutes } from './routes';
-
-const routes = makeMainRoutes();
+import App from './App';
+import 'semantic-ui-css/semantic.min.css'
 
 ReactDOM.render(
-  routes,
+  <App />,
   document.getElementById('root')
 );

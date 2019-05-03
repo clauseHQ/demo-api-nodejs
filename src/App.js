@@ -1,94 +1,109 @@
 import React, { Component } from 'react';
-import { Navbar, Button } from 'react-bootstrap';
+import { Container, Button, Segment, Header, Divider } from 'semantic-ui-react'
 import './App.css';
+import AUTH_CONFIG from './config';
+import axios from 'axios';
 
 class App extends Component {
-  goTo(route) {
-    this.props.history.replace(`/${route}`)
-  }
+  state = { 
+    profile: {},
+    contracts: []
+  };
 
   login() {
-    this.props.auth.login();
+    window.location = `/connect`;
   }
 
-  logout() {
-    this.props.auth.logout();
+  logout() {    
+    window.location = `https://${AUTH_CONFIG.domain}/v2/logout`;
   }
 
-  componentDidMount() {
-    const { renewSession } = this.props.auth;
+  getProfile(){
+    axios.get('/api/profile')
+    .then(({ data }) => this.setState({ profile: data }));
+  }
 
-    if (localStorage.getItem('isLoggedIn') === 'true') {
-      renewSession();
-    }
+  getContracts(){
+    axios.get(`/api/contracts`)
+      .then(({ data }) => this.setState({ contracts: data }));
   }
 
   render() {
-    const { isAuthenticated } = this.props.auth;
+    const { contracts, profile } = this.state
 
     return (
-      <div>
-        <Navbar fluid>
-          <Navbar.Header>
-            <Navbar.Brand>
-              <a href="#">Clause - API Sample</a>
-            </Navbar.Brand>
-            <Button
-              bsStyle="primary"
-              className="btn-margin"
-              onClick={this.goTo.bind(this, 'home')}
-            >
-              Home
+      <Container text>
+        <Header as='h1' dividing>
+          Clause API Sample
+        </Header>
+        
+        <Segment>
+          <Header as='h2'>1. Connect</Header>
+          <p>
+            Before a user can use the Clause API they will need to grant your app access their data.
+            Click <em>Connect to Clause</em> to grant access to this sample app.
+          </p>
+          <Button onClick={this.login.bind(this)}>
+            Connect to Clause
+          </Button>
+        </Segment>
+        <Segment fluid styled>
+          <Header as='h2'>2. Sample API, User Profile</Header>
+          <p>
+          As the first test of the Clause API, we retrieve the current user's profile. 
+          </p>
+          <p>
+            This uses the <a href='https://developers.clause.io/reference#userfindfulluserbyid'>GET users/[userId]/full</a> API.
+          </p>
+          <Button onClick={this.getProfile.bind(this)}>
+            Get User Profile
+          </Button>
+          <Divider />
+          {
+            profile.firstName &&
+            <p>
+              <Header as='h3'>Name:</Header>
+              <span>{profile.firstName} {profile.lastName}</span>
+            </p>
+          }
+          {
+            profile.email &&
+            <p>
+              <Header as='h3'>Email:</Header>
+              <span>{profile.email}</span>
+            </p>
+          }
+        </Segment>
+        <Segment fluid styled>
+          <Header as='h2'>3. Sample API, List Contracts</Header>
+            <p>
+              Next we retrieve a list of all contracts in the user's organization.
+            </p>
+            <p>
+              This uses the <a href='https://developers.clause.io/reference#contractfind'>GET contracts/list</a> API.
+            </p>
+            <Button onClick={this.getContracts.bind(this)}>
+              Get Contracts
             </Button>
-            {
-              !isAuthenticated() && (
-                  <Button
-                    id="qsLoginBtn"
-                    bsStyle="primary"
-                    className="btn-margin"
-                    onClick={this.login.bind(this)}
-                  >
-                    Log In
-                  </Button>
-                )
-            }
-            {
-              isAuthenticated() && (
-                  <Button
-                    bsStyle="primary"
-                    className="btn-margin"
-                    onClick={this.goTo.bind(this, 'profile')}
-                  >
-                    Profile
-                  </Button>
-                )
-            }
-            {
-              isAuthenticated() && (
-                  <Button
-                    bsStyle="primary"
-                    className="btn-margin"
-                    onClick={this.goTo.bind(this, 'ping')}
-                  >
-                    Contracts
-                  </Button>
-                )
-            }
-            {
-              isAuthenticated() && (
-                  <Button
-                    id="qsLogoutBtn"
-                    bsStyle="primary"
-                    className="btn-margin"
-                    onClick={this.logout.bind(this)}
-                  >
-                    Log Out
-                  </Button>
-                )
-            }
-          </Navbar.Header>
-        </Navbar>
-      </div>
+            <Divider />
+            { 
+              contracts.length > 0 &&
+              <div>
+                <Header as='h3'>Contracts</Header>
+                <ul>
+                  { contracts.map((contract, index) => (
+                    <li key={index}>
+                      <p>
+                        <a href={'https://hub.clause.io/contract/'+contract.id}>{contract.name}</a>, {contract.status}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            }            
+        </Segment>
+      </Container>
+
     );
   }
 }

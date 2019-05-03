@@ -1,10 +1,16 @@
 # Clause - API Sample
 
-This samples demonstrates how authenticate against the [Clause API](https://developers.clause.io) from a React single-page application (SPA).
+This sample demonstrates how authenticate against the [Clause API](https://developers.clause.io) from a React single-page application (SPA).
+
+## Warning
+
+This sample does not authenticate requests between the client and the server. You should secure API requests between your client and your server to protect your Clause data.
+
+The sample only demonstrates the server-side code for using the Clause API.
 
 ## Getting Started
 
-To use this sample, create a file `src/Auth/auth0-variables.js` with the contents:
+To use this sample, create a file `config.js` with the contents:
 ```
 export const AUTH_CONFIG = {
   domain: 'login.clause.io',
@@ -21,10 +27,6 @@ Then enter the following commands at the terminal to run the sample on your mach
 npm install
 npm run start
 ```
-
-## Author
-
-This is sample is based on the excellent samples from [Auth0](auth0.com) and modified by [Clause](clause.io).
 
 ## License
 

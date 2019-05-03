@@ -1,2 +1,2 @@
-docker build -t auth0-react-03-calling-an-api .
-docker run -p 3000:3000 -it auth0-react-03-calling-an-api
+docker build -t clause-api-sample .
+docker run -p 5000:5000 -it clause-api-sample

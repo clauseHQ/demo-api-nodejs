@@ -3,28 +3,29 @@
   "version": "0.2.0",
   "private": true,
   "devDependencies": {
-    "react-scripts": "^2.1.1"
+    "react-scripts": "^3.0.0"
   },
+  "proxy": "http://localhost:5000/",
   "dependencies": {
     "axios": "^0.16.2",
-    "bootstrap": "^3.3.7",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "dotenv": "^4.0.0",
-    "history": "^4.6.1",
+    "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
-    "morgan": "^1.8.2",
+    "morgan": "^1.9.1",
     "querystring": "^0.2.0",
-    "react": "^15.6.1",
-    "react-bootstrap": "^0.31.2",
-    "react-dom": "^15.6.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "react-router": "^4.1.2",
-    "react-router-dom": "^4.1.2"
+    "react-router-dom": "^4.1.2",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.86.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "npm run build && npm run server",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "server": "node server.js"
   },
   "eslintConfig": {
     "extends": "react-app"

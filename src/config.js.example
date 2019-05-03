@@ -1,6 +1,6 @@
-export const AUTH_CONFIG = {
+module.exports = {
   domain: 'login.clause.io',
   clientId: {CLIENT_ID},
-  callbackUrl: 'http://localhost:3000/callback',
+  callbackUrl: 'http://localhost:5000/callback',
   apiUrl: 'https://api.clause.io'
 }
