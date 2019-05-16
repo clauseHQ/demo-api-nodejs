@@ -94,7 +94,7 @@ app.get('/api/profile', function(req, res) {
     const headers = { 'Authorization': `Bearer ${token}`}
     axios.get(`${API_URL}/users/${userId}/full`, { headers })
       .then(({ data }) => res.send(data))
-      .catch(error => console.error(error));
+      .catch(error => res.status(error.response.status).send(error.response.data));
   } else {
     res.send(401);
   }
@@ -105,7 +105,8 @@ app.get('/api/contracts', function(req, res) {
   if(token){
     const headers = { 'Authorization': `Bearer ${token}`}
     axios.get(`${API_URL}/contracts/list`, { headers })
-        .then(({ data }) => res.send(data));
+        .then(({ data }) => res.send(data))
+        .catch(error => res.status(error.response.status).send(error.response.data));
   } else {
     res.send(401);
   }
