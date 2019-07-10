@@ -26,7 +26,7 @@ let token;
 
 // The scope determines which API resources and operations can be accessed. 'write:all' is the most permissive.
 // Use the least permissive scopes where possible. 
-const scope = 'write:all';
+const scope = 'write:all org:default';
 
 const app = express();
 
@@ -103,8 +103,10 @@ app.get('/api/profile', function(req, res) {
 // A sample proxy to the contracts API
 app.get('/api/contracts', function(req, res) {
   if(token){
+    const decoded = jwt.decode(token);
+    const orgId = decoded[`https://${AUTH_CONFIG.domain}/claims/organization`]
     const headers = { 'Authorization': `Bearer ${token}`}
-    axios.get(`${API_URL}/contracts/list`, { headers })
+    axios.get(`${API_URL}/contracts?organizationId=${orgId}`, { headers })
         .then(({ data }) => res.send(data))
         .catch(error => res.status(error.response.status).send(error.response.data));
   } else {
