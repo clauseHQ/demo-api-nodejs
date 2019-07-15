@@ -36,7 +36,7 @@ If you receive the following error:
 ```
 unauthorized_client: Callback URL mismatch. http://localhost:5000/callback is not in the list of allowed callback URLs
 ```
-Then you should contact Clause [support](support@clause.io) to get your callback URL added to your Auth0 application.
+Then you should contact Clause support (support@clause.io) to get your callback URL added to your Auth0 application.
 
 ## License
 
