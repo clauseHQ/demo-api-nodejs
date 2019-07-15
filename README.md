@@ -28,7 +28,15 @@ npm install
 npm run start
 ```
 
-You should now be able to run the sample on you local machine: [localhost:5000/](http://localhost:5000/)
+You should now be able to run the sample on your local machine: [localhost:5000/](http://localhost:5000/)
+
+## Troubleshooting
+
+If you receive the following error:
+```
+unauthorized_client: Callback URL mismatch. http://localhost:5000/callback is not in the list of allowed callback URLs
+```
+Then you should contact Clause [support](support@clause.io) to get your callback URL added to your Auth0 application.
 
 ## License
 
