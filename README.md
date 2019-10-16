@@ -10,9 +10,9 @@ The sample only demonstrates the server-side code for using the Clause API.
 
 ## Getting Started
 
-To use this sample, create a file `config.js` with the contents:
+To use this sample, create a file `config.js` in the `/src` directory with the contents:
 ```
-export const AUTH_CONFIG = {
+module.exports = {
   domain: 'login.clause.io',
   clientId: {CLIENT_ID},
   callbackUrl: 'http://localhost:3000/callback',
@@ -27,6 +27,16 @@ Then enter the following commands at the terminal to run the sample on your mach
 npm install
 npm run start
 ```
+
+You should now be able to run the sample on your local machine: [localhost:5000/](http://localhost:5000/)
+
+## Troubleshooting
+
+If you receive the following error:
+```
+unauthorized_client: Callback URL mismatch. http://localhost:5000/callback is not in the list of allowed callback URLs
+```
+Then you should contact Clause support (support@clause.io) to get your callback URL added to your Auth0 application.
 
 ## License
 
