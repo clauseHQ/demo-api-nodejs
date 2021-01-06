@@ -7,7 +7,7 @@
   },
   "proxy": "http://localhost:5000/",
   "dependencies": {
-    "axios": "^0.16.2",
+    "axios": "^0.21.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.16.4",
